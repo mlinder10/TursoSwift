@@ -130,7 +130,6 @@ public final class Database: Sendable {
     request.httpMethod = "POST"
     request.httpBody = bodyData
     request.allHTTPHeaderFields = headers
-    
     let (data, response) = try await URLSession.shared.data(for: request)
 
     guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {

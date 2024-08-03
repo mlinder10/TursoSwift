@@ -86,12 +86,12 @@ public final class Transaction {
 
   func run() async throws -> [BatchResponse] {
     if self.statements.isEmpty { return [] }
-    let sql = "BEGIN TRANSACTION;" + self.statements.map { $0.sql }.joined(separator: "; ") + " COMMIT;"
+    let sql = "BEGIN TRANSACTION; " + self.statements.map { $0.sql }.joined(separator: "; ") + "; COMMIT;"
     let args = self.statements.flatMap { $0.args }
     let res = try await self.db.request(sql, args)
 
     var responses = [BatchResponse]()
-    for (result, stmt) in zip(res.results, self.statements) {
+    for (result, stmt) in zip(res.results[1...], self.statements) {
       switch stmt.transactionType {
       case .query:
         if let rows = result.getRowsAsAny() {
