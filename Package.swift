@@ -5,6 +5,15 @@ import PackageDescription
 
 let package = Package(
     name: "TursoSwift",
+    platforms: [
+      .macOS(.v12),
+      .iOS(.v13),
+      .visionOS(.v1),
+      .watchOS(.v4),
+      .driverKit(.v19),
+      .tvOS(.v12),
+      .macCatalyst(.v13)
+    ],
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
