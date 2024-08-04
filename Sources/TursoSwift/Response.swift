@@ -71,10 +71,19 @@ struct Column: Codable {
 
 struct RowValue: Codable {
   let type: ArgumentType
-  let value: ArgumentValue
+  let value: ArgumentValue?
+  let base64: String?
   
   func toValue() -> Any? {
-    switch self.value {
+    guard let value = self.value else {
+      guard let base64 = self.base64 else {
+        return nil
+      }
+      let offset = base64.count % 4
+      if offset == 0 { return Data(base64Encoded: base64) }
+      return base64 + String(repeating: "=", count: 4 - offset)
+    }
+    switch value {
     case .string(let value):
       switch self.type {
       case .null:
@@ -86,7 +95,7 @@ struct RowValue: Codable {
       case .text:
         return value
       case .blob:
-        return Data(base64Encoded: value!)
+        return Data(base64Encoded: base64!)
       }
     case .f64(let value):
       return value

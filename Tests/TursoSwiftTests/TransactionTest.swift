@@ -9,9 +9,9 @@ final class TransactionTest: XCTestCase {
       User(identify: "2", name: "Jane", emailAddress: "j@j.com"),
     ]
     let posts = [
-      Post(id: UUID().uuidString, title: "Hello", likes: 4, rating: 2.3),
-      Post(id: UUID().uuidString, title: "World", likes: 2, rating: 4.2),
-      Post(id: UUID().uuidString, title: "Swift", likes: 8, rating: 5.0),
+      Post(id: UUID().uuidString, title: "Hello", likes: 4, rating: 2.3, meta: Data(base64Encoded: "hello")!),
+      Post(id: UUID().uuidString, title: "World", likes: 2, rating: 4.2, meta: Data(base64Encoded: "world")!),
+      Post(id: UUID().uuidString, title: "Swift", likes: 8, rating: 5.0, meta: Data(base64Encoded: "swift")!),
     ]
 
     let _ = try await DB.shared.insert(users)

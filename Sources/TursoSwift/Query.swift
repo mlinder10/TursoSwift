@@ -63,7 +63,12 @@ extension Database {
     guard let data = body.results.first?.getRowsAsData(replacements: type.query) else {
       return nil
     }
-    return try JSONDecoder().decode(T.self, from: data)
+
+    if isArray(type) {
+      return try JSONDecoder().decode(T.self, from: data)
+    } else {
+      return try JSONDecoder().decode([T].self, from: data).first
+    }
   }
   
   ///

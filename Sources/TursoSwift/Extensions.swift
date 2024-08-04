@@ -16,3 +16,13 @@ extension Dictionary where Value: Equatable {
 func getPropertyNames<T>(of instance: T) -> [String] {
     return Mirror(reflecting: instance).children.compactMap { $0.label }
 }
+
+protocol AnyArray {}
+
+extension Array: AnyArray {}
+
+extension NSArray: AnyArray {}
+
+func isArray<T>(_ type: T.Type) -> Bool {
+    return type.self is AnyArray.Type
+}

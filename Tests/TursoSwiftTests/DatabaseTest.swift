@@ -27,6 +27,7 @@ struct Post: Insertable {
     var title: String
     var likes: Int
     var rating: Double
+    var meta: Data
 
     // Database
     static var table: String { "posts" }
@@ -35,7 +36,8 @@ struct Post: Insertable {
         "id": .text(id),
         "title": .text(title),
         "likes": .integer(likes),
-        "rating": .float(rating)
+        "rating": .float(rating),
+        "meta": .blob(meta)
     ]}
 }
 

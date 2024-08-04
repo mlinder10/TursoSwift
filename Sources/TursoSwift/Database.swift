@@ -7,41 +7,6 @@ public enum Arg {
   case float((any BinaryFloatingPoint)?)
   case blob(Data?)
   case null
-
-  func toArgument() -> Argument {
-    return switch self {
-      case .null:
-        Argument(type: .null, value: .string("null"))
-      case .integer(let value):
-      switch value {
-        case .some(let value):
-        Argument(type: .integer, value: .string("\(value)"))
-        case .none:
-        Argument(type: .null, value: .string("null"))
-      }
-      case .float(let value):
-      switch value {
-        case .some(let value):
-        Argument(type: .float, value: .f64(Double(value)))
-        case .none:
-        Argument(type: .null, value: .string("null"))
-      }
-      case .text(let value):
-      switch value {
-        case .some(let value):
-        Argument(type: .text, value: .string(value))
-        case .none:
-        Argument(type: .null, value: .string("null"))
-      }
-      case .blob(let value):
-      switch value {
-        case .some(let value):
-        Argument(type: .blob, base64: value.base64EncodedString())
-        case .none:
-        Argument(type: .null, value: .string("null"))
-      }
-    }
-  }
 }
 
 public enum DatabaseError: Error {

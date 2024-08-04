@@ -16,7 +16,7 @@ struct RequestBody: Codable {
       splitArgs.append([])
       let argCount = splitSqls[queryIndex].components(separatedBy: "?").count - 1
       for i in argIndex..<argIndex + argCount {
-        splitArgs[queryIndex].append(args[i].toArgument())
+        splitArgs[queryIndex].append(Argument(from: args[i]))
       }
       argIndex += argCount
     }
@@ -109,6 +109,59 @@ struct Argument: Codable {
   var type: ArgumentType
   var value: ArgumentValue?
   var base64: String?
+
+  init(from arg: Arg) {
+    switch arg {
+      case .null:
+        self.type = .null
+        self.value = .string("null")
+        return
+      case .integer(let value):
+      switch value {
+        case .some(let value):
+        self.type = .integer
+        self.value = .string("\(value)")
+        return
+        case .none:
+        self.type = .null
+        self.value = .string("null")
+        return
+      }
+      case .float(let value):
+      switch value {
+        case .some(let value):
+        self.type = .float
+        self.value = .f64(Double(value))
+        return
+        case .none:
+        self.type = .null
+        self.value = .string("null")
+        return
+      }
+      case .text(let value):
+      switch value {
+        case .some(let value):
+        self.type = .text
+        self.value = .string(value)
+        return
+        case .none:
+        self.type = .null
+        self.value = .string("null")
+        return
+      }
+      case .blob(let value):
+      switch value {
+        case .some(let value):
+        self.type = .blob
+        self.base64 = value.base64EncodedString()
+        return
+        case .none:
+        self.type = .null
+        self.value = .string("null")
+        return
+      }
+    }
+  }
 }
 
 enum ArgumentType: String, Codable {
