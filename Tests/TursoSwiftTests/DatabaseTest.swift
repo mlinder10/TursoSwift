@@ -1,6 +1,6 @@
 import XCTest
 @testable import TursoSwift
-
+import SwiftDotenv
 
 // Definitions
 struct User: Insertable {
@@ -39,31 +39,48 @@ struct Post: Insertable {
     ]}
 }
 
+fileprivate func loadEnv() throws {
+  try Dotenv.configure()
+}
+
 class DB {
-    static let shared = try! Database.connect(
-        url: "https://word-catching-journal-mlinder10.turso.io/v2/pipeline",
-        token: "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJpYXQiOjE3MjI0NDIxMDQsImlkIjoiNGEyMDNhNGYtYzA4NS00YzE4LWI3ODktYWFjYTJiMjIxZjJhIn0.V5wUTuGqlXGKMeiOo4MPi4lp2U9gwbMrHw-H4iSFEsCnsau1kd2GGx28xAHCaFvuVKueaEcr_5i5AUen0mxFCQ"
+  static let shared = try! connect()
+  
+  private static func connect() throws -> Database {
+    try loadEnv()
+    let url = Dotenv.values["DB_URL"] ?? ""
+    let token = Dotenv.values["DB_TOKEN"] ?? ""
+
+    return try Database.connect(
+      url: url,
+      token: token
     )
+  }
 }
 
 final class DatabaseTest: XCTestCase {
-    func testConnectAndPing() async throws {
-        // given
-        let db = try Database.connect(
-          url: "https://word-catching-journal-mlinder10.turso.io/v2/pipeline",
-          token: "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJpYXQiOjE3MjI0NDIxMDQsImlkIjoiNGEyMDNhNGYtYzA4NS00YzE4LWI3ODktYWFjYTJiMjIxZjJhIn0.V5wUTuGqlXGKMeiOo4MPi4lp2U9gwbMrHw-H4iSFEsCnsau1kd2GGx28xAHCaFvuVKueaEcr_5i5AUen0mxFCQ"
-        )
+  func testConnectAndPing() async throws {
+    // given
+    try loadEnv()
 
-        // then
-        try await db.ping()
-    }
+    let url = Dotenv.values["DB_URL"] ?? ""
+    let token = Dotenv.values["DB_TOKEN"] ?? ""
 
-    func testInvalidUrl() throws {
-        XCTAssertThrowsError(
-            try Database.connect(
-              url: "",
-              token: ""
-            )
-        )
-    }
+    let db = try Database.connect(
+      url: url,
+      token: token
+    )
+    
+    // then
+    try await db.ping()
+  }
+  
+  func testInvalidUrl() throws {
+    XCTAssertThrowsError(
+      try Database.connect(
+        url: "",
+        token: ""
+      )
+    )
+  }
 }

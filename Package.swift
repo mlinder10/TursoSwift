@@ -20,6 +20,12 @@ let package = Package(
             name: "TursoSwift",
             targets: ["TursoSwift"]),
     ],
+    dependencies: [
+      .package(
+        url: "https://github.com/thebarndog/swift-dotenv.git",
+        .upToNextMajor(from: "2.0.0")
+      )
+    ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
@@ -27,6 +33,13 @@ let package = Package(
             name: "TursoSwift"),
         .testTarget(
             name: "TursoSwiftTests",
-            dependencies: ["TursoSwift"]),
+            dependencies: [
+              "TursoSwift",
+              .product(
+                name: "SwiftDotenv",
+                package: "swift-dotenv"
+              )
+            ]
+          ),
     ]
 )

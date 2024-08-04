@@ -1,6 +1,5 @@
 import Foundation
 
-
 /// Column types supported by Turso
 public enum Arg {
   case text(String?)
@@ -46,7 +45,7 @@ public enum Arg {
 }
 
 public enum DatabaseError: Error {
-  case invalidURL
+  case invalidURL(String)
   case invalidResponse
   case invalidRowCount
   case rowParseError
@@ -59,10 +58,6 @@ public enum DatabaseError: Error {
 }
 
 public final class Database: Sendable {
-  public static let shared = try! Database.connect(
-    url: "https://lift-logs-pro-mlinder10.turso.io/v2/pipeline",
-    token: "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJpYXQiOjE3MjExMDE2NDQsImlkIjoiNjE3MTg0YjctNzk1Yy00MTgxLTg3ZTUtY2E1MzRkNmQ2N2Y0In0.lD29EJa2GrRnhZYcrh3gys51WqiyYSexKQRkJzW-n_r2hnNangZjBKHwbLP3skOwHp7Gh4M2lYvZAVPf7gk5Dg"
-  )
   
   private let url: URL
   private let token: String
@@ -95,7 +90,7 @@ public final class Database: Sendable {
   /// - Returns: Instance of database connection
   public static func connect(url urlString: String, token: String) throws -> Self {
     guard let url = URL(string: urlString) else {
-      throw DatabaseError.invalidURL
+      throw DatabaseError.invalidURL(urlString)
     }
     return Self(url: url, token: token)
   }
@@ -121,7 +116,7 @@ public final class Database: Sendable {
   
   // ============================MAC/LINUX=======================================
   
-#if os(macOS) || os(Linux)
+#if os(macOS) || os(Linux) || os(iOS)
   func request(_ sql: String, _ args: [Arg] = []) async throws -> ResponseBody {
     let body = RequestBody(sql: sql, args: args)
     let bodyData = try JSONEncoder().encode(body)
